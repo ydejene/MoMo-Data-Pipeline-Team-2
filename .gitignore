@@ -1,0 +1,18 @@
+# Ignore Database and temporary data
+*.sqlite3
+data/raw/momo.xml
+data/processed/*.json
+
+# Ignore Python specific files
+__pycache__/
+*.pyc
+.env
+venv/
+.venv/
+
+# Ignore Logs
+data/logs/*.log
+
+# Operating System files
+.DS_Store
+Thumbs.db
