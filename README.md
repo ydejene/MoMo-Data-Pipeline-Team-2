@@ -12,4 +12,4 @@ An enterprise-level fullstack application to process MoMo SMS data (XML), catego
 
 ## Links
 - **Architecture Diagram:** [Link to image or file]
-- **Scrum Board:** [Link to Trello/Jira/GitHub Projects]
+- **Scrum Board:** [Team 2 Scrum Board](https://github.com/users/ydejene/projects/1)
