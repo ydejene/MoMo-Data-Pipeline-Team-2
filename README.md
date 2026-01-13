@@ -10,7 +10,7 @@
 ---
 
 ## Links
-- **Architecture Diagram:** [Link to image or file](https://drive.google.com/file/d/1_R2R9Gr6-Rh1-_83e8GfeI4qMhwHSEkr/view?usp=sharing)
+- **Architecture Diagram:** [Link to Architecture Diagram](https://drive.google.com/file/d/1_R2R9Gr6-Rh1-_83e8GfeI4qMhwHSEkr/view?usp=sharing)
 - **Scrum Board:** [Team 2 Scrum Board](https://alustudent-team-k1plq8kl.atlassian.net/jira/software/projects/T2MSEP/boards/34?jql=&atlOrigin=eyJpIjoiN2ZkZGMzNjFhMTZkNGQzODg4MTM1YzI2ZGIyZDZiODAiLCJwIjoiaiJ9)
 
 ---
@@ -33,7 +33,7 @@ An enterprise-level fullstack application to process MoMo SMS data (XML), catego
 Our system follows a layered architecture pattern with clear separation of concerns:
 - **Data Ingestion** → **Processing** → **Storage** → **API/Export** → **Visualization**
 
-[Link to Architecture Diagram](./docs/architecture-diagram.png)
+[Link to Architecture Diagram](https://drive.google.com/file/d/1_R2R9Gr6-Rh1-_83e8GfeI4qMhwHSEkr/view?usp=sharing)
 
 ### Architecture Components
 
@@ -59,7 +59,7 @@ Our system follows a layered architecture pattern with clear separation of conce
 | **Dashboard Cache** | `data/processed/dashboard.json` | Pre-aggregated analytics data for fast frontend loading without database queries |
 | **Dead Letter Queue** | `data/logs/dead_letter/` | Stores unparsed or invalid XML snippets for manual review and data quality monitoring |
 
-#### 4️ API Layer (Optional - Bonus Feature)
+#### 4️ API Layer (Optional - Feature)
 | Component | File | Purpose |
 |-----------|------|---------|
 | **FastAPI Backend** | `api/app.py` | RESTful API server providing programmatic access to transaction data |
@@ -75,7 +75,7 @@ Our system follows a layered architecture pattern with clear separation of conce
 | **Styling** | `web/styles.css` | Responsive design and visual styling |
 | **Assets** | `web/assets/` | Icons, images, and other static resources |
 
-#### 🔧 Automation Scripts
+#### Automation Scripts
 | Script | Purpose | Usage |
 |--------|---------|-------|
 | `scripts/run_etl.sh` | Executes the complete ETL pipeline from XML to database | `./scripts/run_etl.sh` |
