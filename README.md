@@ -10,9 +10,10 @@
 ---
 
 ## Links
-- **Architecture Diagram:** [Link to image or file]
-- **Scrum Board:** [Team 2 Scrum Board](https://github.com/users/ydejene/projects/1)
+- **Architecture Diagram:** [Link to image or file](https://drive.google.com/file/d/1_R2R9Gr6-Rh1-_83e8GfeI4qMhwHSEkr/view?usp=sharing)
+- **Scrum Board:** [Team 2 Scrum Board](https://alustudent-team-k1plq8kl.atlassian.net/jira/software/projects/T2MSEP/boards/34?jql=&atlOrigin=eyJpIjoiN2ZkZGMzNjFhMTZkNGQzODg4MTM1YzI2ZGIyZDZiODAiLCJwIjoiaiJ9)
 
+---
 
 ## Project Overview
 An enterprise-level fullstack application to process MoMo SMS data (XML), categorize transactions, and visualize insights via a dashboard.
