@@ -10,7 +10,7 @@
 ---
 
 ## Links
-- **Architecture Diagram:** [Link to Architecture Diagram](https://drive.google.com/file/d/1_R2R9Gr6-Rh1-_83e8GfeI4qMhwHSEkr/view?usp=sharing)
+- **Architecture Diagram:** [Link to Architecture Diagram](./docs/architecture-diagram.png)
 - **Scrum Board:** [Team 2 Scrum Board](https://alustudent-team-k1plq8kl.atlassian.net/jira/software/projects/T2MSEP/boards/34?jql=&atlOrigin=eyJpIjoiN2ZkZGMzNjFhMTZkNGQzODg4MTM1YzI2ZGIyZDZiODAiLCJwIjoiaiJ9)
 
 ---
@@ -33,7 +33,7 @@ An enterprise-level fullstack application to process MoMo SMS data (XML), catego
 Our system follows a layered architecture pattern with clear separation of concerns:
 - **Data Ingestion** → **Processing** → **Storage** → **API/Export** → **Visualization**
 
-[Link to Architecture Diagram](https://drive.google.com/file/d/1_R2R9Gr6-Rh1-_83e8GfeI4qMhwHSEkr/view?usp=sharing)
+[Link to Architecture Diagram](./docs/architecture-diagram.png)
 
 ### Architecture Components
 
