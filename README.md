@@ -193,4 +193,15 @@ For enterprise-scale needs:
     ├── test_clean_normalize.py
     └── test_categorize.py
 ```
+---
 
+## References & Credits
+
+### Tools Used
+- **Eraser.io** - Architecture diagram design and generation
+- **GitHub** - Version control and team collaboration
+- **Jira** - Agile project management and sprint tracking
+
+### Documentation
+- Project structure inspired by industry best practices
+- ETL patterns based on data engineering principles
