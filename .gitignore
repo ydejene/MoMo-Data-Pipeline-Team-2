@@ -1,6 +1,6 @@
 # Ignore Database and temporary data
 *.sqlite3
-data/raw/momo.xml
+data/raw/modified_sms_v2.xml
 data/processed/*.json
 
 # Ignore Python specific files
@@ -16,3 +16,5 @@ data/logs/*.log
 # Operating System files
 .DS_Store
 Thumbs.db
+
+/resources
