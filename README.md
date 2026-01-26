@@ -27,6 +27,7 @@ An enterprise-level fullstack application to process MoMo SMS data (XML), catego
 - [Project Structure](#project-structure)
 - [System Architecture](#system-architecture)
 - [Database Design](#database-design)
+- [Table-to-JSON Mapping Guide](#table-to-json_mapping_guide)
 ---
 
 ## Project Structure
@@ -230,6 +231,17 @@ Our database is built around the core idea that every MoMo transaction involves 
 - **Check constraints** ensuring data validity (currency codes, status values, non-negative amounts)
 - **Indexes** on frequently queried columns (user_id, transaction_date, phone_number)
 - **Audit trail** via raw SMS storage and system logs
+
+## Table-to-JSON Mapping Guide
+
+| SQL Table | JSON Representation | Relationship Handling |
+| :--- | :--- | :--- |
+| **Momo_User** | Flat object | Referenced by `user_id` FK |
+| **Transaction_Categories** | Flat object | Referenced by `category_id` FK |
+| **Fee_Type** | Flat object | Referenced by `fee_type_id` FK |
+| **Transactions** | Nested object with `user` and `category` | FKs expanded to nested objects |
+| **Transaction_fees** | Array in parent transaction | M:N resolved to `fees` array with nested `fee_type` |
+| **System_Logs** | Flat object | Standalone, no relations |
 
 ## References & Credits
 
