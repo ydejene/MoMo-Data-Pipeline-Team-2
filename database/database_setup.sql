@@ -55,10 +55,10 @@ CREATE TABLE Transactions (
     category_id BIGINT NOT NULL COMMENT 'Transaction category',
     user_id BIGINT NOT NULL COMMENT 'Mobile money user',
     
-    FOREIGN KEY (category_id) REFERENCES Transaction_Categories(category_id)
+    CONSTRAINT fk_transactions_transaction_categories FOREIGN KEY (category_id) REFERENCES Transaction_Categories(category_id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES Momo_User(user_id)
+    CONSTRAINT fk_transactions_momo_user FOREIGN KEY (user_id) REFERENCES Momo_User(user_id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
     
@@ -95,10 +95,10 @@ CREATE TABLE Transaction_fees (
     transaction_id BIGINT NOT NULL COMMENT 'Reference to parent transaction',
     fee_type_id BIGINT NOT NULL COMMENT 'Type of fee applied',
     
-    FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id)
+    CONSTRAINT fk_transaction_fees_transactions FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (fee_type_id) REFERENCES Fee_Type(fee_type_id)
+    CONSTRAINT fk_transaction_fees_fee_type FOREIGN KEY (fee_type_id) REFERENCES Fee_Type(fee_type_id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
     
@@ -148,8 +148,7 @@ INSERT INTO Transaction_Categories (category_name, category_code, is_active) VAL
 ('Deposit', 'DEPOSIT', TRUE),
 ('Withdrawal', 'WITHDRAWAL', TRUE),
 ('Airtime Purchase', 'AIRTIME', TRUE),
-('Bill Payment', 'BILL_PAYMENT', TRUE),
-('Bundle purchase', 'BUNDLE_PURCHASE', TRUE);
+('Bill Payment', 'BILL_PAYMENT', TRUE);
 
 -- Insert fee types (at least 5)
 INSERT INTO Fee_Type (fee_name) VALUES
