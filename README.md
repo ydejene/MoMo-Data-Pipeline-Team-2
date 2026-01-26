@@ -27,7 +27,7 @@ An enterprise-level fullstack application to process MoMo SMS data (XML), catego
 - [Project Structure](#project-structure)
 - [System Architecture](#system-architecture)
 - [Database Design](#database-design)
-- [Table to JSON Mapping Guide](#table_to_json_mapping_guide)
+- [Table to JSON Mapping Guide](#table-to-json-mapping-guide)
 ---
 
 ## Project Structure
