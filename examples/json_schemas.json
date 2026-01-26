@@ -488,5 +488,29 @@
     ],
     "total_fees": 150.0,
     "total_cost": 40150.0
+  },
+  {
+    "success": true,
+    "count": 9,
+    "data": [
+      {
+        "transaction_id": 1,
+        "external_ref": "76662021700",
+        "amount": 2000.0,
+        "currency": "RWF",
+        "transaction_status": "COMPLETED",
+        "transaction_date": "2024-05-10T16:30:51Z",
+        "counter_party": "Jane Smith",
+        "user": {
+          "user_id": 1,
+          "full_name": "John Doe"
+        },
+        "category": {
+          "category_name": "Transfer",
+          "category_code": "TRANSFER"
+        }
+      }
+      // ... more transactions
+    ]
   }
 ]
