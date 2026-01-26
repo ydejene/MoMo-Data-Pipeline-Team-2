@@ -148,7 +148,8 @@ INSERT INTO Transaction_Categories (category_name, category_code, is_active) VAL
 ('Deposit', 'DEPOSIT', TRUE),
 ('Withdrawal', 'WITHDRAWAL', TRUE),
 ('Airtime Purchase', 'AIRTIME', TRUE),
-('Bill Payment', 'BILL_PAYMENT', TRUE);
+('Bill Payment', 'BILL_PAYMENT', TRUE),
+('Bundle purchase', 'BUNDLE_PURCHASE', TRUE);
 
 -- Insert fee types (at least 5)
 INSERT INTO Fee_Type (fee_name) VALUES
