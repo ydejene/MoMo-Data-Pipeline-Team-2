@@ -169,6 +169,7 @@ INSERT INTO Transactions (external_ref, amount, currency, transaction_status, se
 ('TXN12347', 300.00, 'RWF', 'COMPLETED', NULL, 'Airtime purchase of 300 RWF completed successfully.', '2024-05-13 08:45:00', 'MTN Rwanda', 5, 4),
 ('TXN12348', 2500.00, 'RWF', 'PENDING', NULL, 'Bill payment pending confirmation.', '2024-05-14 10:00:00', 'EUCL', 6, 5),
 ('TXN12349', 800.00, 'RWF', 'FAILED', NULL, 'Transaction failed due to insufficient balance.', '2024-05-14 15:30:00', 'Emma Brown', 1, 6);
+('TXN12350', 1200.00, 'RWF', 'PENDING', NULL, 'Transaction pending confirmation.', '2024-05-14 15:30:00', 'Gatete Derrick', 1, 6);
 
 -- Insert transaction fees (M:N relationship - at least 5)
 INSERT INTO Transaction_fees (transaction_id, fee_type_id, transaction_fee_amount) VALUES

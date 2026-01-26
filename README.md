@@ -10,7 +10,9 @@
 ---
 
 ## Links
-- **Architecture Diagram:** [Link to Architecture Diagram](./docs/architecture-diagram.png)
+- **Architecture Diagram:** [Link to Architecture Diagram](./docs/images/architecture-diagram.png)
+- **ERD Diagram:** [View ERD](./docs/images/erd_diagram.png)
+- **ERD Design Rationale:** [Read Justification](./docs/ERD_justification.md)
 - **Scrum Board:** [Team 2 Scrum Board](https://alustudent-team-k1plq8kl.atlassian.net/jira/software/projects/T2MSEP/boards/34?jql=&atlOrigin=eyJpIjoiN2ZkZGMzNjFhMTZkNGQzODg4MTM1YzI2ZGIyZDZiODAiLCJwIjoiaiJ9)
 
 ---
@@ -24,7 +26,56 @@ An enterprise-level fullstack application to process MoMo SMS data (XML), catego
 
 - [Project Structure](#project-structure)
 - [System Architecture](#system-architecture)
+- [Database Design](#database-design)
+---
 
+## Project Structure
+
+```
+MoMo-Data-Pipeline-Team-2/
+├── .git/                             # Git version control
+├── .gitignore                        # Git ignore rules
+├── LICENSE                           # MIT License
+├── README.md                         # Project documentation
+│
+├── api/                              # API layer (placeholder for future development)
+│   └── .gitkeep
+│
+├── data/                             # Data storage directory
+│   ├── raw/                          # Raw input data
+│   │   ├── .gitkeep
+│   │   └── modified_sms_v2.xml       # Raw MoMo SMS data (816KB)
+│   ├── processed/                    # Processed data outputs
+│   │   └── .gitkeep
+│   └── logs/                         # Processing logs
+│       └── dead_letter/              # Failed/unparsed records
+│           └── .gitkeep
+│
+├── database/                         # Database schema and setup
+│   └── database_setup.sql            # Complete database DDL and sample data
+│
+├── docs/                             # Documentation
+│   ├── ERD_justification.md          # Database design rationale
+│   └── images/                       # Diagrams and visuals
+│       ├── architecture-diagram.png  # System architecture diagram
+│       └── erd_diagram.png           # Entity relationship diagram
+│
+├── etl/                              # ETL pipeline (placeholder for future development)
+│   └── .gitkeep
+│
+├── examples/                         # Example schemas and data models
+│   └── json_schemas.json             # JSON schemas for all database entities
+│
+├── scripts/                          # Automation scripts (placeholder for future development)
+│   └── .gitkeep
+│
+├── tests/                            # Test suite (placeholder for future development)
+│   └── .gitkeep
+│
+└── web/                              # Frontend dashboard (placeholder for future development)
+    └── assets/
+        └── .gitkeep
+```
 ---
 
 ## System Architecture
@@ -37,71 +88,80 @@ Our system follows a layered architecture pattern with clear separation of conce
 
 ### Architecture Components
 
-#### 1️ Data Source Layer
+#### 1️⃣ Data Source Layer
 | Component | Purpose | Technology |
 |-----------|---------|------------|
-| `momo.xml` | Raw MoMo SMS transaction data in XML format | XML |
+| `modified_sms_v2.xml` | Raw MoMo SMS transaction data in XML format (816KB) | XML |
 
-#### 2️ ETL Pipeline (Backend Processing)
-| Component | File | Purpose |
-|-----------|------|---------|
-| **XML Parser** | `etl/parse_xml.py` | Reads and validates XML structure, extracts transaction records |
-| **Data Cleaner** | `etl/clean_normalize.py` | Normalizes amounts (removes currency symbols), standardizes date formats, normalizes phone numbers |
-| **Categorizer** | `etl/categorize.py` | Applies business rules to classify transactions (e.g., airtime, transfer, bill payment) |
-| **Error Handler** | Built into pipeline | Captures malformed/invalid data and routes to dead letter queue |
-| **ETL Orchestrator** | `etl/run.py` | CLI tool that coordinates the entire ETL workflow |
-| **Logger** | `data/logs/etl.log` | Records all ETL operations, errors, and audit trail for debugging and monitoring |
+#### 2️⃣ ETL Pipeline (Planned - Not Yet Implemented)
+| Component | Planned File | Purpose |
+|-----------|-------------|---------|
+| **XML Parser** | `etl/parse_xml.py` | Will read and validate XML structure, extract transaction records |
+| **Data Cleaner** | `etl/clean_normalize.py` | Will normalize amounts, standardize date formats, normalize phone numbers |
+| **Categorizer** | `etl/categorize.py` | Will apply business rules to classify transactions |
+| **Error Handler** | Built into pipeline | Will capture malformed/invalid data and route to dead letter queue |
+| **ETL Orchestrator** | `etl/run.py` | Planned CLI tool to coordinate the entire ETL workflow |
+| **Logger** | `data/logs/*.log` | Will record all ETL operations, errors, and audit trail |
 
-#### 3️ Storage Layer
-| Component | File/Location | Purpose |
-|-----------|---------------|---------|
-| **SQLite Database** | `data/db.sqlite3` | Relational database storing normalized transaction data in structured tables |
-| **Dashboard Cache** | `data/processed/dashboard.json` | Pre-aggregated analytics data for fast frontend loading without database queries |
-| **Dead Letter Queue** | `data/logs/dead_letter/` | Stores unparsed or invalid XML snippets for manual review and data quality monitoring |
+> **Status:** ETL directory currently contains only placeholder `.gitkeep` file. Implementation pending.
 
-#### 4️ API Layer (Optional - Feature)
-| Component | File | Purpose |
-|-----------|------|---------|
-| **FastAPI Backend** | `api/app.py` | RESTful API server providing programmatic access to transaction data |
-| **Endpoints** | | • `GET /transactions` - Retrieve filtered transaction list<br>• `GET /analytics` - Get aggregated statistics<br>• `GET /categories` - List transaction categories |
-| **Database Helper** | `api/db.py` | SQLite connection pool and query utilities |
-| **Data Schemas** | `api/schemas.py` | Pydantic models for request/response validation |
+#### 3️⃣ Storage Layer
+| Component | File/Location | Purpose | Status |
+|-----------|---------------|---------|--------|
+| **Database Schema** | `database/database_setup.sql` | Complete MySQL database schema with DDL and sample data | ✅ Implemented |
+| **Raw Data** | `data/raw/modified_sms_v2.xml` | Original MoMo SMS transaction data in XML format | ✅ Available |
+| **Processed Data** | `data/processed/` | Directory for processed outputs (currently empty) | 📁 Ready |
+| **Dead Letter Queue** | `data/logs/dead_letter/` | Directory for failed/unparsed records | 📁 Ready |
 
-#### 5️ Presentation Layer (Frontend)
-| Component | File | Purpose |
-|-----------|------|---------|
-| **Dashboard UI** | `index.html` | Main user interface for viewing transactions and analytics |
-| **Visualization Engine** | `web/chart_handler.js` | Fetches data and renders interactive charts and tables |
-| **Styling** | `web/styles.css` | Responsive design and visual styling |
-| **Assets** | `web/assets/` | Icons, images, and other static resources |
+#### 4️⃣ API Layer (Planned - Not Yet Implemented)
+| Component | Planned File | Purpose |
+|-----------|-------------|---------|
+| **FastAPI Backend** | `api/app.py` | Will provide RESTful API server for transaction data access |
+| **Planned Endpoints** | | • `GET /transactions` - Retrieve filtered transaction list<br>• `GET /analytics` - Get aggregated statistics<br>• `GET /categories` - List transaction categories |
+| **Database Helper** | `api/db.py` | Will handle database connection pool and query utilities |
+| **Data Schemas** | `api/schemas.py` | Will define Pydantic models for request/response validation |
 
-#### Automation Scripts
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| `scripts/run_etl.sh` | Executes the complete ETL pipeline from XML to database | `./scripts/run_etl.sh` |
-| `scripts/export_json.sh` | Regenerates `dashboard.json` with latest aggregated data | `./scripts/export_json.sh` |
-| `scripts/serve_frontend.sh` | Starts local development server for testing the dashboard | `./scripts/serve_frontend.sh` |
+> **Status:** API directory currently contains only placeholder `.gitkeep` file. Implementation pending.
 
-### Data Flow
+#### 5️⃣ Presentation Layer (Planned - Not Yet Implemented)
+| Component | Planned File | Purpose |
+|-----------|-------------|---------|
+| **Dashboard UI** | `index.html` | Will provide main user interface for viewing transactions and analytics |
+| **Visualization Engine** | `web/chart_handler.js` | Will fetch data and render interactive charts and tables |
+| **Styling** | `web/styles.css` | Will provide responsive design and visual styling |
+| **Assets** | `web/assets/` | Directory for icons, images, and static resources |
+
+> **Status:** Web directory currently contains only placeholder structure. Implementation pending.
+
+#### 6️⃣ Automation Scripts (Planned - Not Yet Implemented)
+| Planned Script | Purpose | Planned Usage |
+|----------------|---------|---------------|
+| `scripts/run_etl.sh` | Will execute the complete ETL pipeline from XML to database | `./scripts/run_etl.sh` |
+| `scripts/export_json.sh` | Will regenerate dashboard data with latest aggregations | `./scripts/export_json.sh` |
+| `scripts/serve_frontend.sh` | Will start local development server for testing | `./scripts/serve_frontend.sh` |
+
+> **Status:** Scripts directory currently contains only placeholder `.gitkeep` file. Implementation pending.
+
+### Data Flow (Planned Architecture)
 ```
-1. XML File (momo.xml) 
+1. XML File (modified_sms_v2.xml) 
    ↓
-2. ETL Pipeline
+2. ETL Pipeline (To Be Implemented)
    • Parse XML → Extract transactions
    • Clean & Normalize → Standardize formats
    • Categorize → Apply business rules
    • Validate → Route errors to dead letter
    ↓
 3. Dual Storage
-   • Valid data → SQLite Database (normalized tables)
+   • Valid data → Database (schema defined in database_setup.sql)
    • Invalid data → Dead Letter Queue (for review)
-   • Logs → etl.log (audit trail)
+   • Logs → Processing logs (audit trail)
    ↓
-4. Data Access Layer
+4. Data Access Layer (To Be Implemented)
    • Option A: Export aggregated data → dashboard.json
    • Option B: API endpoints → Real-time queries
    ↓
-5. Frontend Visualization
+5. Frontend Visualization (To Be Implemented)
    • Load data (from JSON or API)
    • Render charts, tables, analytics
    • Display to end user
@@ -110,90 +170,66 @@ Our system follows a layered architecture pattern with clear separation of conce
 ### Design Decisions
 
 **Why ETL Pattern?**
-- Separates concerns: parsing, cleaning, and loading are independent
+- Will separate concerns: parsing, cleaning, and loading as independent stages
 - Enables error handling at each stage
 - Makes testing and debugging easier
 
-**Why SQLite?**
-- Lightweight, no separate server required
-- Perfect for development and small-to-medium datasets
-- Easy to backup (single file)
+**Why MySQL?**
+- Industry-standard relational database
+- Robust support for complex queries and transactions
+- Excellent for structured financial data
+- Easy to migrate to cloud-hosted MySQL (AWS RDS, Google Cloud SQL)
 
-**Why dashboard.json?**
-- Reduces database load for frequently accessed aggregations
-- Faster frontend loading (no API/DB overhead)
-- Can be version controlled for change tracking
+**Why JSON Schemas?**
+- Provides clear API response format documentation
+- Enables frontend-backend contract validation
+- Demonstrates how relational data will be serialized
+- Useful for API development and testing
 
 **Why Dead Letter Queue?**
-- Preserves problematic data for investigation
+- Will preserve problematic data for investigation
 - Prevents data loss
-- Helps identify data quality issues
+- Helps identify data quality issues in SMS parsing
 
-### Error Handling Strategy
+### Error Handling Strategy (Planned)
 
-Our system implements comprehensive error handling:
-- **Validation errors** → Logged with details in `etl.log`
+The system will implement comprehensive error handling:
+- **Validation errors** → Logged with details
 - **Malformed XML** → Stored in `dead_letter/` for manual review
 - **Processing failures** → Transaction rolled back, error logged
 - **Database errors** → Graceful degradation, user notification
 
 ### Scalability Considerations
 
-Current architecture supports:
+Current architecture design supports:
 - Thousands of transactions per run
 - Multiple ETL executions per day
 - Concurrent frontend users (via static files or API)
 
 For enterprise-scale needs:
-- Migrate SQLite → PostgreSQL/MySQL
-- Add message queue (RabbitMQ/Kafka) for real-time processing
-- Implement caching layer (Redis)
-- Deploy API with load balancing
+- MySQL already supports production workloads
+- Can add message queue (RabbitMQ/Kafka) for real-time processing
+- Can implement caching layer (Redis)
+- Can deploy API with load balancing
 
 ---
 
-## Project Structure
-```
-├── README.md                         # Setup, run, overview
-├── .env.example                      # DATABASE_URL or path to SQLite
-├── requirements.txt                  # lxml/ElementTree, dateutil, (FastAPI optional)
-├── index.html                        # Dashboard entry (static)
-├── web/
-│   ├── styles.css                    # Dashboard styling
-│   ├── chart_handler.js              # Fetch + render charts/tables
-│   └── assets/                       # Images/icons (optional)
-├── data/
-│   ├── raw/                          # Provided XML input (git-ignored)
-│   │   └── momo.xml
-│   ├── processed/                    # Cleaned/derived outputs for frontend
-│   │   └── dashboard.json            # Aggregates the dashboard reads
-│   ├── db.sqlite3                    # SQLite DB file
-│   └── logs/
-│       ├── etl.log                   # Structured ETL logs
-│       └── dead_letter/              # Unparsed/ignored XML snippets
-├── etl/
-│   ├── __init__.py
-│   ├── config.py                     # File paths, thresholds, categories
-│   ├── parse_xml.py                  # XML parsing (ElementTree/lxml)
-│   ├── clean_normalize.py            # Amounts, dates, phone normalization
-│   ├── categorize.py                 # Simple rules for transaction types
-│   ├── load_db.py                    # Create tables + upsert to SQLite
-│   └── run.py                        # CLI: parse -> clean -> categorize -> load -> export JSON
-├── api/                              # Optional (bonus)
-│   ├── __init__.py
-│   ├── app.py                        # Minimal FastAPI with /transactions, /analytics
-│   ├── db.py                         # SQLite connection helpers
-│   └── schemas.py                    # Pydantic response models
-├── scripts/
-│   ├── run_etl.sh                    # python etl/run.py --xml data/raw/momo.xml
-│   ├── export_json.sh                # Rebuild data/processed/dashboard.json
-│   └── serve_frontend.sh             # python -m http.server 8000 (or Flask static)
-└── tests/
-    ├── test_parse_xml.py             # Small unit tests
-    ├── test_clean_normalize.py
-    └── test_categorize.py
-```
----
+## Database Design
+
+### Entity Relationship Diagram
+![ERD Diagram](docs/images/erd_diagram.png)
+
+### Design Rationale
+[Read the full ERD design justification](./docs/ERD_justification.md)
+
+Our database is built around the core idea that every MoMo transaction involves an individual, a transaction type, and potentially multiple fees. 
+
+### Key Features
+- **Normalized schema** with proper primary and foreign key relationships
+- **Junction table** (`Transaction_fees`) resolving many-to-many fee relationships
+- **Check constraints** ensuring data validity (currency codes, status values, non-negative amounts)
+- **Indexes** on frequently queried columns (user_id, transaction_date, phone_number)
+- **Audit trail** via raw SMS storage and system logs
 
 ## References & Credits
 
@@ -205,3 +241,77 @@ For enterprise-scale needs:
 ### Documentation
 - Project structure inspired by industry best practices
 - ETL patterns based on data engineering principles
+
+## AI Usage Attribution
+
+### Policy Compliance Statement
+This project was developed by **Team 2** (Brian, Derick, Habibllah, Yonas) in full compliance with academic integrity policies. All code, database schemas, and technical implementations were designed and written by team members. AI tools were used **exclusively for research, learning, and conceptual understanding** - not for generating implementation code or solutions.
+
+### Detailed AI Usage Log
+
+#### 1. Database Design Research (January 23-24, 2026)
+**AI Tool Used:** ChatGPT, Google Gemini  
+**Purpose:** Research and Learning  
+**Specific Usage:**
+- Researched best practices for **normalizing financial transaction data**
+- Studied **foreign key relationship patterns** in relational databases
+- Learned about **junction table design** for many-to-many relationships
+- Explored **indexing strategies** for transaction query performance
+- Understood **check constraints** for data validation
+
+
+#### 2. JSON Schema Standards Research (January 24, 2026)
+**AI Tool Used:** ChatGPT  
+**Purpose:** Understanding Industry Standards  
+**Specific Usage:**
+- Researched **JSON Schema specification (draft-07)** syntax and structure
+- Learned about **data type definitions** and validation rules
+- Studied **nested object representation** for relational data in JSON
+- Explored **API response format conventions** for financial data
+
+
+#### 3. ETL Architecture Patterns Research (January 25, 2026)
+**AI Tool Used:** Google Gemini, ChatGPT  
+**Purpose:** Learning Software Architecture Concepts  
+**Specific Usage:**
+- Researched **Extract-Transform-Load (ETL) pipeline patterns**
+- Studied **error handling strategies** in data processing systems
+- Learned about **dead letter queue concepts** for failed records
+- Explored **data validation techniques** for XML parsing
+- Understood **logging and audit trail best practices**
+
+
+
+#### 4. Documentation Best Practices Research (January 25-26, 2026)
+**AI Tool Used:** ChatGPT  
+**Purpose:** Learning Technical Documentation Standards  
+**Specific Usage:**
+- Researched **README.md structure** for data engineering projects
+- Studied **Entity Relationship Diagram (ERD) documentation** practices
+- Learned about **architecture diagram conventions**
+- Explored **markdown formatting** for technical documentation
+
+
+
+#### 5. MySQL Syntax and Features Research (January 23, 2026)
+**AI Tool Used:** ChatGPT, Official MySQL Documentation  
+**Purpose:** Learning Database-Specific Features  
+**Specific Usage:**
+- Researched **MySQL data types** (BIGINT, DECIMAL, VARCHAR, DATETIME)
+- Studied **AUTO_INCREMENT** and primary key syntax
+- Learned about **ON DELETE CASCADE vs RESTRICT** behaviors
+- Explored **COMMENT** syntax for table and column documentation
+- Understood **UNIQUE KEY constraints** for composite uniqueness
+
+
+
+#### 6. Git and Version Control Research (January 26, 2026)
+**AI Tool Used:** Google Gemini  
+**Purpose:** Learning Best Practices  
+**Specific Usage:**
+- Researched **`.gitignore` patterns** for data engineering projects
+- Learned about **directory structure conventions** for ETL projects
+- Studied **placeholder file usage** (`.gitkeep`) in empty directories
+
+
+
