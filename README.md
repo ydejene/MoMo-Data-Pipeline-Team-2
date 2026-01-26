@@ -10,7 +10,9 @@
 ---
 
 ## Links
-- **Architecture Diagram:** [Link to Architecture Diagram](./docs/architecture-diagram.png)
+- **Architecture Diagram:** [Link to Architecture Diagram](./docs/images/architecture-diagram.png)
+- **ERD Diagram:** [View ERD](./docs/images/erd_diagram.png)
+- **ERD Design Rationale:** [Read Justification](./docs/ERD_justification.md)
 - **Scrum Board:** [Team 2 Scrum Board](https://alustudent-team-k1plq8kl.atlassian.net/jira/software/projects/T2MSEP/boards/34?jql=&atlOrigin=eyJpIjoiN2ZkZGMzNjFhMTZkNGQzODg4MTM1YzI2ZGIyZDZiODAiLCJwIjoiaiJ9)
 
 ---
@@ -24,7 +26,7 @@ An enterprise-level fullstack application to process MoMo SMS data (XML), catego
 
 - [Project Structure](#project-structure)
 - [System Architecture](#system-architecture)
-
+- [Database Design](#database-design)
 ---
 
 ## System Architecture
@@ -151,6 +153,23 @@ For enterprise-scale needs:
 - Deploy API with load balancing
 
 ---
+
+## Database Design
+
+### Entity Relationship Diagram
+![ERD Diagram](docs/images/erd_diagram.png)
+
+### Design Rationale
+[Read the full ERD design justification](docs/ERD.justification.md)
+
+Our database is built around the core idea that every MoMo transaction involves an individual, a transaction type, and potentially multiple fees. 
+
+### Key Features
+- **Normalized schema** with proper primary and foreign key relationships
+- **Junction table** (`Transaction_fees`) resolving many-to-many fee relationships
+- **Check constraints** ensuring data validity (currency codes, status values, non-negative amounts)
+- **Indexes** on frequently queried columns (user_id, transaction_date, phone_number)
+- **Audit trail** via raw SMS storage and system logs
 
 ## Project Structure
 ```
