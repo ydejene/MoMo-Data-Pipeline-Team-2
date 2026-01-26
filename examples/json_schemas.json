@@ -1,0 +1,492 @@
+[
+  {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MoMo User",
+    "description": "Represents a mobile money user account",
+    "type": "object",
+    "properties": {
+      "user_id": {
+        "type": "integer",
+        "description": "Unique user identifier",
+        "example": 1
+      },
+      "full_name": {
+        "type": "string",
+        "maxLength": 255,
+        "description": "User's full name",
+        "example": "John Doe"
+      },
+      "email_address": {
+        "type": ["string", "null"],
+        "format": "email",
+        "maxLength": 255,
+        "description": "Optional email address",
+        "example": "john.doe@example.com"
+      },
+      "phone_number": {
+        "type": "string",
+        "pattern": "^[0-9]{12}$",
+        "description": "Mobile money phone number",
+        "example": "250788123456"
+      },
+      "username": {
+        "type": ["string", "null"],
+        "maxLength": 30,
+        "description": "Optional username for login",
+        "example": "johndoe"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Account creation timestamp",
+        "example": "2024-05-10T16:30:51Z"
+      }
+    },
+    "required": ["user_id", "full_name", "phone_number", "created_at"]
+  },
+
+  {
+    "user_id": 1,
+    "full_name": "John Doe",
+    "email_address": "john.doe@example.com",
+    "phone_number": "250788123456",
+    "username": "johndoe",
+    "created_at": "2024-05-10T16:30:51Z"
+  },
+  {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Transaction Category",
+    "description": "Represents a transaction category/type",
+    "type": "object",
+    "properties": {
+      "category_id": {
+        "type": "integer",
+        "description": "Unique category identifier",
+        "example": 1
+      },
+      "category_name": {
+        "type": "string",
+        "maxLength": 30,
+        "description": "Display name for category",
+        "example": "Transfer"
+      },
+      "category_code": {
+        "type": "string",
+        "maxLength": 30,
+        "description": "Internal code for application logic",
+        "example": "TRANSFER"
+      },
+      "is_active": {
+        "type": "boolean",
+        "description": "Whether category is currently active",
+        "example": true
+      }
+    },
+    "required": ["category_id", "category_name", "category_code", "is_active"]
+  },
+  {
+    "category_id": 1,
+    "category_name": "Transfer",
+    "category_code": "TRANSFER",
+    "is_active": true
+  },
+  {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Fee Type",
+    "description": "Represents a type of transaction fee",
+    "type": "object",
+    "properties": {
+      "fee_type_id": {
+        "type": "integer",
+        "description": "Unique fee type identifier",
+        "example": 1
+      },
+      "fee_name": {
+        "type": "string",
+        "maxLength": 50,
+        "description": "Fee type name",
+        "example": "Transaction Fee"
+      }
+    },
+    "required": ["fee_type_id", "fee_name"]
+  },
+  {
+    "fee_type_id": 1,
+    "fee_name": "Transaction Fee"
+  },
+  {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Transaction Fee",
+    "description": "Represents a fee applied to a transaction (junction table entity)",
+    "type": "object",
+    "properties": {
+      "transaction_fees_id": {
+        "type": "integer",
+        "description": "Unique fee record identifier",
+        "example": 5
+      },
+      "transaction_fee_amount": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Actual fee amount charged",
+        "example": 100.0
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Fee record creation timestamp",
+        "example": "2024-05-11T18:44:02Z"
+      },
+      "transaction": {
+        "type": "object",
+        "description": "Reference to parent transaction (nested)",
+        "properties": {
+          "transaction_id": {
+            "type": "integer",
+            "example": 4
+          },
+          "external_ref": {
+            "type": "string",
+            "example": "DEPOSIT001"
+          },
+          "amount": {
+            "type": "number",
+            "example": 40000.0
+          },
+          "currency": {
+            "type": "string",
+            "example": "RWF"
+          }
+        },
+        "required": ["transaction_id", "external_ref", "amount"]
+      },
+      "fee_type": {
+        "type": "object",
+        "description": "Type of fee applied (nested)",
+        "properties": {
+          "fee_type_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "fee_name": {
+            "type": "string",
+            "example": "Transaction Fee"
+          }
+        },
+        "required": ["fee_type_id", "fee_name"]
+      }
+    },
+    "required": [
+      "transaction_fees_id",
+      "transaction_fee_amount",
+      "created_at",
+      "transaction",
+      "fee_type"
+    ]
+  },
+  {
+    "transaction_fees_id": 1,
+    "transaction_fee_amount": 0.0,
+    "created_at": "2024-05-10T16:30:55Z",
+    "transaction": {
+      "transaction_id": 1,
+      "external_ref": "76662021700",
+      "amount": 2000.0,
+      "currency": "RWF"
+    },
+    "fee_type": {
+      "fee_type_id": 1,
+      "fee_name": "Transaction Fee"
+    }
+  },
+  {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "System Log",
+    "description": "Represents a system processing log entry",
+    "type": "object",
+    "properties": {
+      "log_id": {
+        "type": "integer",
+        "description": "Unique log entry identifier",
+        "example": 1
+      },
+      "log_type": {
+        "type": "string",
+        "enum": [
+          "PARSE_ERROR",
+          "DB_ERROR",
+          "VALIDATION_ERROR",
+          "BATCH_START",
+          "BATCH_COMPLETE"
+        ],
+        "description": "Type of log entry",
+        "example": "PARSE_ERROR"
+      },
+      "raw_sms_body": {
+        "type": ["string", "null"],
+        "description": "Raw SMS content if parsing error occurred",
+        "example": "TxId: INVALID. Amount field missing."
+      },
+      "severity": {
+        "type": "string",
+        "enum": ["ERROR", "WARNING", "INFO"],
+        "description": "Log severity level",
+        "example": "ERROR"
+      },
+      "log_time": {
+        "type": "string",
+        "format": "date-time",
+        "description": "When log entry was created",
+        "example": "2024-05-11T10:30:00Z"
+      }
+    },
+    "required": ["log_id", "log_type", "severity", "log_time"]
+  },
+  {
+    "log_id": 3,
+    "log_type": "PARSE_ERROR",
+    "raw_sms_body": "TxId: INVALID. Amount field missing from SMS body.",
+    "severity": "ERROR",
+    "log_time": "2024-05-11T10:30:00Z"
+  },
+  {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Complete Transaction",
+    "description": "Represents a complete transaction with all related entities (user, category, fees)",
+    "type": "object",
+    "properties": {
+      "transaction_id": {
+        "type": "integer",
+        "description": "Unique transaction identifier",
+        "example": 4
+      },
+      "external_ref": {
+        "type": "string",
+        "maxLength": 100,
+        "description": "External transaction reference from SMS",
+        "example": "DEPOSIT001"
+      },
+      "amount": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Transaction amount",
+        "example": 40000.0
+      },
+      "currency": {
+        "type": "string",
+        "enum": ["RWF", "ETB", "USD"],
+        "description": "Currency code",
+        "example": "RWF"
+      },
+      "transaction_status": {
+        "type": "string",
+        "enum": ["COMPLETED", "FAILED", "PENDING"],
+        "description": "Transaction status",
+        "example": "COMPLETED"
+      },
+      "sender_notes": {
+        "type": ["string", "null"],
+        "description": "Optional transaction notes from sender",
+        "example": null
+      },
+      "raw_data": {
+        "type": "string",
+        "description": "Original SMS message body",
+        "example": "*113*R*A bank deposit of 40000 RWF has been added to your mobile money account at 2024-05-11 18:43:49."
+      },
+      "transaction_date": {
+        "type": "string",
+        "format": "date-time",
+        "description": "When transaction actually occurred",
+        "example": "2024-05-11T18:43:49Z"
+      },
+      "counter_party": {
+        "type": ["string", "null"],
+        "maxLength": 255,
+        "description": "Name of other party in transaction (not a registered user)",
+        "example": "Bank Deposit"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Database insertion timestamp",
+        "example": "2024-05-11T18:44:02Z"
+      },
+      "user": {
+        "type": "object",
+        "description": "MoMo user who owns this transaction",
+        "properties": {
+          "user_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "full_name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "phone_number": {
+            "type": "string",
+            "example": "250788123456"
+          },
+          "email_address": {
+            "type": ["string", "null"],
+            "example": "john.doe@example.com"
+          },
+          "username": {
+            "type": ["string", "null"],
+            "example": "johndoe"
+          }
+        },
+        "required": ["user_id", "full_name", "phone_number"]
+      },
+      "category": {
+        "type": "object",
+        "description": "Transaction category information",
+        "properties": {
+          "category_id": {
+            "type": "integer",
+            "example": 3
+          },
+          "category_name": {
+            "type": "string",
+            "example": "Deposit"
+          },
+          "category_code": {
+            "type": "string",
+            "example": "DEPOSIT"
+          },
+          "is_active": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "category_id",
+          "category_name",
+          "category_code",
+          "is_active"
+        ]
+      },
+      "fees": {
+        "type": "array",
+        "description": "Array of fees applied to this transaction (demonstrates M:N relationship)",
+        "items": {
+          "type": "object",
+          "properties": {
+            "transaction_fees_id": {
+              "type": "integer",
+              "description": "Unique fee record identifier",
+              "example": 5
+            },
+            "fee_type": {
+              "type": "object",
+              "description": "Type of fee applied",
+              "properties": {
+                "fee_type_id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "fee_name": {
+                  "type": "string",
+                  "example": "Transaction Fee"
+                }
+              },
+              "required": ["fee_type_id", "fee_name"]
+            },
+            "transaction_fee_amount": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Actual fee amount charged",
+              "example": 100.0
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Fee record creation timestamp",
+              "example": "2024-05-11T18:44:02Z"
+            }
+          },
+          "required": [
+            "transaction_fees_id",
+            "fee_type",
+            "transaction_fee_amount",
+            "created_at"
+          ]
+        },
+        "minItems": 0
+      },
+      "total_fees": {
+        "type": "number",
+        "description": "Sum of all fees for this transaction (computed field)",
+        "example": 150.0
+      },
+      "total_cost": {
+        "type": "number",
+        "description": "Transaction amount + total fees (computed field)",
+        "example": 40150.0
+      }
+    },
+    "required": [
+      "transaction_id",
+      "external_ref",
+      "amount",
+      "currency",
+      "transaction_status",
+      "raw_data",
+      "transaction_date",
+      "created_at",
+      "user",
+      "category",
+      "fees",
+      "total_fees",
+      "total_cost"
+    ]
+  },
+  {
+    "transaction_id": 4,
+    "external_ref": "DEPOSIT001",
+    "amount": 40000.0,
+    "currency": "RWF",
+    "transaction_status": "COMPLETED",
+    "sender_notes": null,
+    "raw_data": "*113*R*A bank deposit of 40000 RWF has been added to your mobile money account at 2024-05-11 18:43:49. Your NEW BALANCE :40400 RWF.",
+    "transaction_date": "2024-05-11T18:43:49Z",
+    "counter_party": "Bank Deposit",
+    "created_at": "2024-05-11T18:44:02Z",
+    "user": {
+      "user_id": 1,
+      "full_name": "John Doe",
+      "phone_number": "250788123456",
+      "email_address": "john.doe@example.com",
+      "username": "johndoe"
+    },
+    "category": {
+      "category_id": 3,
+      "category_name": "Deposit",
+      "category_code": "DEPOSIT",
+      "is_active": true
+    },
+    "fees": [
+      {
+        "transaction_fees_id": 5,
+        "fee_type": {
+          "fee_type_id": 1,
+          "fee_name": "Transaction Fee"
+        },
+        "transaction_fee_amount": 100.0,
+        "created_at": "2024-05-11T18:44:02Z"
+      },
+      {
+        "transaction_fees_id": 6,
+        "fee_type": {
+          "fee_type_id": 2,
+          "fee_name": "Tax"
+        },
+        "transaction_fee_amount": 50.0,
+        "created_at": "2024-05-11T18:44:02Z"
+      }
+    ],
+    "total_fees": 150.0,
+    "total_cost": 40150.0
+  }
+]
