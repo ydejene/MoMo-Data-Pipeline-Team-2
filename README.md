@@ -27,7 +27,7 @@ An enterprise-level fullstack application to process MoMo SMS data (XML), catego
 - [Project Structure](#project-structure)
 - [System Architecture](#system-architecture)
 - [Database Design](#database-design)
-- [Table to JSON Mapping Guide](#table-to-json-mapping-guide)
+- [SQL table to JSON Mapping Guide](#sql-table-to-json-mapping-guide)
 ---
 
 ## Project Structure
@@ -232,7 +232,7 @@ Our database is built around the core idea that every MoMo transaction involves 
 - **Indexes** on frequently queried columns (user_id, transaction_date, phone_number)
 - **Audit trail** via raw SMS storage and system logs
 
-## Table to JSON Mapping Guide
+## SQL Table to JSON Mapping Guide
 
 | SQL Table | JSON Representation | Relationship Handling |
 | :--- | :--- | :--- |
