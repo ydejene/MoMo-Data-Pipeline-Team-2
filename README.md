@@ -273,3 +273,77 @@ Our database is built around the core idea that every MoMo transaction involves 
 ### Documentation
 - Project structure inspired by industry best practices
 - ETL patterns based on data engineering principles
+
+## AI Usage Attribution
+
+### Policy Compliance Statement
+This project was developed by **Team 2** (Brian, Derick, Habibllah, Yonas) in full compliance with academic integrity policies. All code, database schemas, and technical implementations were designed and written by team members. AI tools were used **exclusively for research, learning, and conceptual understanding** - not for generating implementation code or solutions.
+
+### Detailed AI Usage Log
+
+#### 1. Database Design Research (January 23-24, 2026)
+**AI Tool Used:** ChatGPT, Google Gemini  
+**Purpose:** Research and Learning  
+**Specific Usage:**
+- Researched best practices for **normalizing financial transaction data**
+- Studied **foreign key relationship patterns** in relational databases
+- Learned about **junction table design** for many-to-many relationships
+- Explored **indexing strategies** for transaction query performance
+- Understood **check constraints** for data validation
+
+
+#### 2. JSON Schema Standards Research (January 24, 2026)
+**AI Tool Used:** ChatGPT  
+**Purpose:** Understanding Industry Standards  
+**Specific Usage:**
+- Researched **JSON Schema specification (draft-07)** syntax and structure
+- Learned about **data type definitions** and validation rules
+- Studied **nested object representation** for relational data in JSON
+- Explored **API response format conventions** for financial data
+
+
+#### 3. ETL Architecture Patterns Research (January 25, 2026)
+**AI Tool Used:** Google Gemini, ChatGPT  
+**Purpose:** Learning Software Architecture Concepts  
+**Specific Usage:**
+- Researched **Extract-Transform-Load (ETL) pipeline patterns**
+- Studied **error handling strategies** in data processing systems
+- Learned about **dead letter queue concepts** for failed records
+- Explored **data validation techniques** for XML parsing
+- Understood **logging and audit trail best practices**
+
+
+
+#### 4. Documentation Best Practices Research (January 25-26, 2026)
+**AI Tool Used:** ChatGPT  
+**Purpose:** Learning Technical Documentation Standards  
+**Specific Usage:**
+- Researched **README.md structure** for data engineering projects
+- Studied **Entity Relationship Diagram (ERD) documentation** practices
+- Learned about **architecture diagram conventions**
+- Explored **markdown formatting** for technical documentation
+
+
+
+#### 5. MySQL Syntax and Features Research (January 23, 2026)
+**AI Tool Used:** ChatGPT, Official MySQL Documentation  
+**Purpose:** Learning Database-Specific Features  
+**Specific Usage:**
+- Researched **MySQL data types** (BIGINT, DECIMAL, VARCHAR, DATETIME)
+- Studied **AUTO_INCREMENT** and primary key syntax
+- Learned about **ON DELETE CASCADE vs RESTRICT** behaviors
+- Explored **COMMENT** syntax for table and column documentation
+- Understood **UNIQUE KEY constraints** for composite uniqueness
+
+
+
+#### 6. Git and Version Control Research (January 26, 2026)
+**AI Tool Used:** Google Gemini  
+**Purpose:** Learning Best Practices  
+**Specific Usage:**
+- Researched **`.gitignore` patterns** for data engineering projects
+- Learned about **directory structure conventions** for ETL projects
+- Studied **placeholder file usage** (`.gitkeep`) in empty directories
+
+
+
