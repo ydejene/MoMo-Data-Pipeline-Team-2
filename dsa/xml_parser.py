@@ -1,7 +1,24 @@
 import json
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from xml.etree import ElementTree as ET
+
+
+def _parse_amount(value: Optional[str]) -> Optional[float]:
+    if not value:
+        return None
+    return float(value.replace(",", ""))
+
+
+def _parse_readable_date(value: Optional[str]) -> Optional[str]:
+    if not value:
+        return None
+    try:
+        dt = datetime.strptime(value, "%d %b %Y %I:%M:%S %p")
+        return dt.isoformat()
+    except ValueError:
+        return value
 
 
 def parse_sms_xml(file_path: str | Path) -> List[Dict[str, Any]]:
