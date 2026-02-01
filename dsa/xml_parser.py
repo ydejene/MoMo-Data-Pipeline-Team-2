@@ -1,8 +1,21 @@
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from xml.etree import ElementTree as ET
+
+
+AMOUNT_RE = re.compile(r"(?P<amount>[0-9,]+)\s*RWF", re.IGNORECASE)
+TXID_RE = re.compile(r"(?:TxId|Transaction Id|Financial Transaction Id|External Transaction Id)[:\s]+(?P<txid>[0-9]+)")
+
+TRANSFER_RE = re.compile(r"transferred to\s+(?P<name>[^()]+)\s*\((?P<phone>[0-9*]+)\)", re.IGNORECASE)
+PAYMENT_RE = re.compile(r"payment of\s+(?P<amount>[0-9,]+)\s*RWF\s+to\s+(?P<name>[^0-9]+)\s*(?P<code>[0-9]+)?", re.IGNORECASE)
+RECEIVED_RE = re.compile(r"received\s+(?P<amount>[0-9,]+)\s*RWF\s+from\s+(?P<name>[^()]+)", re.IGNORECASE)
+DEPOSIT_RE = re.compile(r"bank deposit of\s+(?P<amount>[0-9,]+)\s*RWF", re.IGNORECASE)
+WITHDRAW_RE = re.compile(r"withdrawn\s+(?P<amount>[0-9,]+)\s*RWF", re.IGNORECASE)
+FEE_RE = re.compile(r"Fee(?: was| paid| was:)\s*:?\s*(?P<fee>[0-9,]+)\s*RWF", re.IGNORECASE)
+BALANCE_RE = re.compile(r"New balance:?\s*(?P<balance>[0-9,]+)\s*RWF", re.IGNORECASE)
 
 
 def _parse_amount(value: Optional[str]) -> Optional[float]:
