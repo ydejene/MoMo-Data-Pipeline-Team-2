@@ -132,6 +132,7 @@ def parse_sms_xml(file_path: str | Path) -> List[Dict[str, Any]]:
 
     return transactions
 
+
 def save_transactions_to_json(transactions: List[Dict[str, Any]], output_path: str | Path) -> None:
     output_path = Path(output_path)
     output_path.write_text(json.dumps(transactions, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -143,4 +144,4 @@ if __name__ == "__main__":
 
     transactions = parse_sms_xml(default_xml)
     save_transactions_to_json(transactions, default_out)
-    print(f"Successfully parsed {len(transactions)} transactions and saved to transactions.json!")
+    print(f"Succesfully parsed {len(transactions)} transactions from modified_sms_v2.xml and saved to transactions.json!")
