@@ -29,3 +29,15 @@ def linear_search(transactions: List[Dict], transaction_id: int) -> Optional[Dic
             return transaction
     return None
 
+def measure_search_time(search_func, *args, iterations: int = 100):
+    """Measure average execution time for a search function."""
+    times = []
+    
+    for _ in range(iterations):
+        start_time = time.perf_counter()
+        search_func(*args)
+        end_time = time.perf_counter()
+        times.append(end_time - start_time)
+    
+    avg_time = sum(times) / len(times)
+    return avg_time
