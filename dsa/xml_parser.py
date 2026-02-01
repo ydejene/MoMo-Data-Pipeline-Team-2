@@ -107,6 +107,8 @@ def parse_sms_xml(file_path: str | Path) -> List[Dict[str, Any]]:
         attributes = sms.attrib
         body = attributes.get("body", "")
 
+        body_fields = _extract_body_fields(body)
+
         transaction = {
             "id": attributes.get("date", str(idx)),
             "index": idx,
@@ -123,12 +125,12 @@ def parse_sms_xml(file_path: str | Path) -> List[Dict[str, Any]]:
             "locked": attributes.get("locked"),
             "service_center": attributes.get("service_center"),
             "contact_name": attributes.get("contact_name"),
+            **body_fields,
         }
 
         transactions.append(transaction)
 
     return transactions
-
 
 def save_transactions_to_json(transactions: List[Dict[str, Any]], output_path: str | Path) -> None:
     output_path = Path(output_path)
