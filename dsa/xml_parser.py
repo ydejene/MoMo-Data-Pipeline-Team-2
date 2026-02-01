@@ -42,6 +42,7 @@ def parse_sms_xml(file_path: str | Path) -> List[Dict[str, Any]]:
             "raw_body": body,
             "date": attributes.get("date"),
             "readable_date": attributes.get("readable_date"),
+            "readable_date_iso": _parse_readable_date(attributes.get("readable_date")),
             "status": attributes.get("status"),
             "read": attributes.get("read"),
             "locked": attributes.get("locked"),
