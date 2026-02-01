@@ -34,6 +34,68 @@ def _parse_readable_date(value: Optional[str]) -> Optional[str]:
         return value
 
 
+def _extract_body_fields(body: str) -> Dict[str, Any]:
+    """Extract transaction fields from SMS body text using regex patterns."""
+    fields: Dict[str, Any] = {
+        "transaction_type": None,
+        "amount": None,
+        "currency": "RWF",
+        "sender_name": None,
+        "receiver_name": None,
+        "receiver_phone": None,
+        "fee": None,
+        "balance": None,
+        "transaction_id": None,
+    }
+
+    txid_match = TXID_RE.search(body)
+    if txid_match:
+        fields["transaction_id"] = txid_match.group("txid")
+
+    fee_match = FEE_RE.search(body)
+    if fee_match:
+        fields["fee"] = _parse_amount(fee_match.group("fee"))
+
+    balance_match = BALANCE_RE.search(body)
+    if balance_match:
+        fields["balance"] = _parse_amount(balance_match.group("balance"))
+
+    transfer_match = TRANSFER_RE.search(body)
+    if transfer_match:
+        fields["transaction_type"] = "TRANSFER"
+        fields["receiver_name"] = transfer_match.group("name").strip()
+        fields["receiver_phone"] = transfer_match.group("phone").replace("*", "")
+
+    payment_match = PAYMENT_RE.search(body)
+    if payment_match:
+        fields["transaction_type"] = "PAYMENT"
+        fields["amount"] = _parse_amount(payment_match.group("amount"))
+        fields["receiver_name"] = payment_match.group("name").strip()
+
+    received_match = RECEIVED_RE.search(body)
+    if received_match:
+        fields["transaction_type"] = "RECEIVED"
+        fields["amount"] = _parse_amount(received_match.group("amount"))
+        fields["sender_name"] = received_match.group("name").strip()
+
+    deposit_match = DEPOSIT_RE.search(body)
+    if deposit_match:
+        fields["transaction_type"] = "DEPOSIT"
+        fields["amount"] = _parse_amount(deposit_match.group("amount"))
+
+    withdraw_match = WITHDRAW_RE.search(body)
+    if withdraw_match:
+        fields["transaction_type"] = "WITHDRAWAL"
+        fields["amount"] = _parse_amount(withdraw_match.group("amount"))
+
+    if fields["amount"] is None:
+        amount_match = AMOUNT_RE.search(body)
+        if amount_match:
+            fields["amount"] = _parse_amount(amount_match.group("amount"))
+
+    return fields
+
+
 def parse_sms_xml(file_path: str | Path) -> List[Dict[str, Any]]:
     file_path = Path(file_path)
     tree = ET.parse(file_path)
