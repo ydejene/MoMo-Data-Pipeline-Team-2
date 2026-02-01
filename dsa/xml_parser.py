@@ -34,6 +34,16 @@ def _parse_readable_date(value: Optional[str]) -> Optional[str]:
         return value
 
 
+def _parse_timestamp(timestamp_ms: Optional[str]) -> Optional[str]:
+    if not timestamp_ms:
+        return None
+    try:
+        timestamp_sms = int(timestamp_ms)
+        return datetime.fromtimestamp(timestamp_sms / 1000).isoformat()
+    except (ValueError, TypeError):
+        return None
+
+
 def _extract_body_fields(body: str) -> Dict[str, Any]:
     """Extract transaction fields from SMS body text using regex patterns."""
     fields: Dict[str, Any] = {
@@ -119,7 +129,7 @@ def parse_sms_xml(file_path: str | Path) -> List[Dict[str, Any]]:
             "raw_body": body,
             "date": attributes.get("date"),
             "readable_date": attributes.get("readable_date"),
-            "readable_date_iso": _parse_readable_date(attributes.get("readable_date")),
+            "date_iso": _parse_timestamp(attributes.get("date")),
             "status": attributes.get("status"),
             "read": attributes.get("read"),
             "locked": attributes.get("locked"),
