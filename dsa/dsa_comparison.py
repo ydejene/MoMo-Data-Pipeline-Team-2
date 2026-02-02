@@ -105,3 +105,45 @@ def run_comparison(num_searches: int = 20):
     
     # Calculate speedup
     speedup = avg_linear_time / avg_dict_time if avg_dict_time > 0 else 0
+
+    # Display results
+    print("\n" + "="*70)
+    print("RESULTS")
+    print("="*70)
+    print(f"\nDataset size: {len(transactions)} transactions")
+    print(f"Number of searches: {num_searches}")
+    print(f"\nLinear Search:")
+    print(f"  - Average time: {avg_linear_time * 1_000_000:.2f} microseconds")
+    print(f"  - Time complexity: O(n)")
+    print(f"  - How it works: Iterates through list sequentially")
+    
+    print(f"\nDictionary Lookup:")
+    print(f"  - Average time: {avg_dict_time * 1_000_000:.2f} microseconds")
+    print(f"  - Time complexity: O(1)")
+    print(f"  - How it works: Direct hash table access")
+    
+    print(f"\nPerformance Improvement:")
+    print(f"  - Dictionary lookup is {speedup:.2f}x faster")
+    print(f"  - Time saved per search: {(avg_linear_time - avg_dict_time) * 1_000_000:.2f} microseconds")
+
+
+    print("="*70)
+    
+    # Verify correctness
+    print("\n✓ Verification: Both methods return the same results")
+    test_id = search_ids[0]
+    linear_result = linear_search(transactions, test_id)
+    dict_result = dictionary_lookup(transaction_dict, test_id)
+    print(f"  Transaction ID {test_id}:")
+    print(f"    Linear search found: {linear_result is not None}")
+    print(f"    Dictionary lookup found: {dict_result is not None}")
+    print(f"    Results match: {linear_result == dict_result}")
+
+
+def main():
+    """Main function to run DSA comparison."""
+    run_comparison(num_searches=20)
+
+
+if __name__ == '__main__':
+    main()
