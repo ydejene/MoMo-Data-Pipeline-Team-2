@@ -18,3 +18,6 @@ data/logs/*.log
 Thumbs.db
 
 /resources
+
+# Automation Scripts
+git_automate.ps1
