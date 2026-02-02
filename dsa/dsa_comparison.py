@@ -8,6 +8,7 @@ import json
 import time
 import random
 from typing import List, Dict, Optional
+import matplotlib.pyplot as plt
 
 
 def load_transactions(file_path: str = '..data/processed/transactions.json') -> List[Dict]:
@@ -56,6 +57,37 @@ def measure_search_time(search_func, *args, iterations: int = 100):
     
     avg_time = sum(times) / len(times)
     return avg_time
+
+def plot_comparison(linear_time: float, dict_time: float):
+    """Generate and save a bar chart comparing search times."""
+    algorithms = ['Linear Search', 'Dictionary Lookup']
+    times = [linear_time * 1_000_000, dict_time * 1_000_000]  # Convert to microseconds
+    
+    plt.figure(figsize=(10, 6))
+    bars = plt.bar(algorithms, times, color=['#FF6B6B', '#4ECDC4'])
+    
+    plt.title('Search Performance Comparison: Linear vs Dictionary', fontsize=16)
+    plt.ylabel('Average Execution Time (microseconds)', fontsize=12)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    
+    # Add value labels
+    for bar in bars:
+        height = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2., height,
+                f'{height:.2f} µs',
+                ha='center', va='bottom', fontsize=11, fontweight='bold')
+                
+    # Add note about scale if difference is massive
+    if linear_time > dict_time * 100:
+        plt.yscale('log')
+        plt.ylabel('Average Execution Time (microseconds) - Log Scale', fontsize=12)
+        plt.text(0.5, -0.1, '* Logarithmic scale used due to massive performance difference', 
+                 ha='center', transform=plt.gca().transAxes, style='italic')
+    
+    output_file = 'dsa/performance_comparison.png'
+    plt.savefig(output_file)
+    print(f"\n✓ Visualization saved to {output_file}")
+    plt.close()
 
 def run_comparison(num_searches: int = 20):
     """Run performance comparison between linear search and dictionary lookup."""
@@ -137,7 +169,11 @@ def run_comparison(num_searches: int = 20):
     print(f"  Transaction ID {test_id}:")
     print(f"    Linear search found: {linear_result is not None}")
     print(f"    Dictionary lookup found: {dict_result is not None}")
+    print(f"    Dictionary lookup found: {dict_result is not None}")
     print(f"    Results match: {linear_result == dict_result}")
+
+    # Generate plot
+    plot_comparison(avg_linear_time, avg_dict_time)
 
 
 def main():
