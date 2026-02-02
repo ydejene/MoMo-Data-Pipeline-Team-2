@@ -11,7 +11,7 @@ from typing import List, Dict, Optional
 import matplotlib.pyplot as plt
 
 
-def load_transactions(file_path: str = '..data/processed/transactions.json') -> List[Dict]:
+def load_transactions(file_path: str = '../data/processed/03_categorized.json') -> List[Dict]:
     """Load transactions from JSON file."""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -84,7 +84,7 @@ def plot_comparison(linear_time: float, dict_time: float):
         plt.text(0.5, -0.1, '* Logarithmic scale used due to massive performance difference', 
                  ha='center', transform=plt.gca().transAxes, style='italic')
     
-    output_file = 'dsa/performance_comparison.png'
+    output_file = '../dsa/performance_comparison.png'
     plt.savefig(output_file)
     print(f"\n✓ Visualization saved to {output_file}")
     plt.close()
