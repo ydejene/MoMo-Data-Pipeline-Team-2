@@ -1,13 +1,19 @@
 # api/auth.py
 import base64
 import json
-from typing import Tuple
+import sys
+from pathlib import Path
+
+DEFAULT_REALM = "MoMo SMS API"
+
+# Allow importing database modules when running api/app.py directly
+sys.path.append(str(Path(__file__).parent.parent / "database"))
+
+from db_config import get_session
+from models import User
 
 
-DEFAULT_REALM = "MoMo API"
-
-
-def _parse_basic_header(auth_header: str) -> Tuple[str | None, str | None]:
+def _parse_basic_header(auth_header: str):
     """
     Extract (username, password) from an Authorization header.
     Returns (None, None) if invalid.
@@ -17,6 +23,7 @@ def _parse_basic_header(auth_header: str) -> Tuple[str | None, str | None]:
         return None, None
 
     encoded = auth_header.split(" ", 1)[1].strip()
+
     try:
         decoded = base64.b64decode(encoded).decode("utf-8")
     except Exception:
@@ -29,14 +36,28 @@ def _parse_basic_header(auth_header: str) -> Tuple[str | None, str | None]:
     return username, password
 
 
-def is_authorized(headers, valid_username: str = "admin", valid_password: str = "password123") -> bool:
+def is_authorized(headers) -> bool:
     """
-    Check Basic Auth credentials from request headers.
+    Validate Basic Auth credentials against the User table in SQLite.
     headers is typically BaseHTTPRequestHandler.headers
     """
     auth_header = headers.get("Authorization")
     username, password = _parse_basic_header(auth_header)
-    return username == valid_username and password == valid_password
+
+    if not username or not password:
+        return False
+
+    session = get_session()
+    try:
+        user = session.query(User).filter_by(username=username).first()
+        if not user:
+            return False
+
+        # NOTE: this project stores plain text password (password_text)
+        # In real systems you'd store a hashed password and verify with bcrypt/argon2.
+        return user.password_text == password
+    finally:
+        session.close()
 
 
 def send_unauthorized(handler, realm: str = DEFAULT_REALM) -> None:
