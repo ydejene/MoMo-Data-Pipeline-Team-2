@@ -92,3 +92,16 @@ def run_comparison(num_searches: int = 20):
     
     avg_linear_time = sum(linear_times) / len(linear_times)
     print(f"Average time: {avg_linear_time * 1_000_000:.2f} microseconds")
+
+    # Measure Dictionary Lookup performance
+    print("\nTesting Dictionary Lookup (O(1))...")
+    dict_times = []
+    for search_id in search_ids:
+        avg_time = measure_search_time(dictionary_lookup, transaction_dict, search_id, iterations=100)
+        dict_times.append(avg_time)
+    
+    avg_dict_time = sum(dict_times) / len(dict_times)
+    print(f"Average time: {avg_dict_time * 1_000_000:.2f} microseconds")
+    
+    # Calculate speedup
+    speedup = avg_linear_time / avg_dict_time if avg_dict_time > 0 else 0
