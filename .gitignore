@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Ignore Database and temporary data
 *.sqlite3
 data/raw/modified_sms_v2.xml
@@ -21,3 +22,25 @@ Thumbs.db
 
 # Automation Scripts
 git_automate.ps1
+=======
+# Ignore Database and temporary data
+*.sqlite3
+data/raw/modified_sms_v2.xml
+data/processed/*.json
+
+# Ignore Python specific files
+__pycache__/
+*.pyc
+.env
+venv/
+.venv/
+
+# Ignore Logs
+data/logs/*.log
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+/resources
+>>>>>>> brian
