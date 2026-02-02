@@ -2,10 +2,10 @@
 
 ## Team 2 - MoMo SMS ETL & REST API Project
 ### Team Members
-- **Brian** - API Development (PUT/DELETE endpoints)
-- **Derick** - ETL Pipeline (Parse & Clean)
-- **Habibllah** - Database Design & DSA Implementation
-- **Yonas** - API Development (GET/POST endpoints)
+- **Brian** 
+- **Derick** 
+- **Habibllah** 
+- **Yonas** 
 
 ---
 
