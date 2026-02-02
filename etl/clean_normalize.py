@@ -69,8 +69,8 @@ def save_to_json(data, output_path):
 
 def main():
     """Clean and normalize extracted data"""
-    input_file = "data/processed/01_extracted_raw.json"
-    output_file = "data/processed/02_cleaned_normalized.json"
+    input_file = "../data/processed/01_extracted_raw.json"
+    output_file = "../data/processed/02_cleaned_normalized.json"
     
     print("="*60)
     print("STEP 2: TRANSFORM - Clean & Normalize")

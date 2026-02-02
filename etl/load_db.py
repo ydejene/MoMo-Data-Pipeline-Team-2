@@ -133,7 +133,7 @@ def load_transactions_to_db(json_file_path):
 
 def main():
     """Load categorized transactions into database"""
-    input_file = "data/processed/03_categorized.json"
+    input_file = "../data/processed/03_categorized.json"
     
     print("="*60)
     print("STEP 4: LOAD - Save to Database")

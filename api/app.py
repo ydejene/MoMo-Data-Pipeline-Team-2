@@ -448,3 +448,6 @@ def run(port=8000):
     except KeyboardInterrupt:
         print("\n\n✓ Server stopped")
         httpd.server_close()
+
+if __name__ == "__main__":
+    run()
