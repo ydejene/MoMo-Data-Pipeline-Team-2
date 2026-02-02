@@ -19,6 +19,14 @@ def load_transactions(file_path: str = '..data/processed/transactions.json') -> 
         print(f"Error: {file_path} not found")
         return []
 
+def build_transaction_dict(transactions: List[Dict]) -> Dict[int, Dict]:
+    """Build dictionary with transaction_id as key for O(1) lookup."""
+    transaction_dict = {}
+    for idx, transaction in enumerate(transactions, start=1):
+        transaction['transaction_id'] = idx
+        transaction_dict[idx] = transaction
+    return transaction_dict
+
 def linear_search(transactions: List[Dict], transaction_id: int) -> Optional[Dict]:
     """
     Linear Search - O(n) time complexity
@@ -33,7 +41,7 @@ def measure_search_time(search_func, *args, iterations: int = 100):
     """Measure average execution time for a search function."""
     times = []
     
-    for _ in range(iterations):
+    for _in range(iterations):
         start_time = time.perf_counter()
         search_func(*args)
         end_time = time.perf_counter()
