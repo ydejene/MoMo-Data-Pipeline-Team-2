@@ -1,23 +1,20 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import re
+import base64
 import sys
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
-from datetime import datetime
 
 # Add database to path
 sys.path.append(str(Path(__file__).parent.parent / 'database'))
 
 from db_config import get_session
 from models import Transaction, User, TransactionCategory, TransactionFee, FeeType, SystemLog
-
-# NEW: import auth helpers from api/auth.py (same folder)
-from auth import is_authorized, send_unauthorized
-
+from datetime import datetime
 
 class TransactionHandler(BaseHTTPRequestHandler):
-
+    
     def _set_headers(self, status=200):
         """Set response headers"""
         self.send_response(status)
@@ -26,14 +23,46 @@ class TransactionHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         self.end_headers()
-
-    def _require_auth_or_return(self) -> bool:
-        """Central auth gate for all endpoints."""
-        if not is_authorized(self.headers):
-            send_unauthorized(self, realm="MoMo SMS API")
+    
+    def _authenticate(self):
+        """Verify Basic Authentication"""
+        auth_header = self.headers.get('Authorization')
+        
+        if not auth_header or not auth_header.startswith('Basic '):
             return False
-        return True
-
+        
+        try:
+            # Decode Base64 credentials
+            encoded = auth_header.split(' ')[1]
+            decoded = base64.b64decode(encoded).decode('utf-8')
+            username, password = decoded.split(':', 1)
+            
+            # Query database for user
+            session = get_session()
+            try:
+                user = session.query(User).filter_by(username=username).first()
+                if user and user.password_text == password:
+                    return True
+            finally:
+                session.close()
+            
+            return False
+            
+        except Exception as e:
+            print(f"Auth error: {e}")
+            return False
+    
+    def _send_unauthorized(self):
+        """Send 401 Unauthorized response"""
+        self.send_response(401)
+        self.send_header('WWW-Authenticate', 'Basic realm="MoMo SMS API"')
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({
+            'error': 'Unauthorized',
+            'message': 'Valid credentials required'
+        }).encode())
+    
     def _transaction_to_dict(self, transaction):
         """Convert SQLAlchemy Transaction model to dictionary"""
         return {
@@ -63,53 +92,58 @@ class TransactionHandler(BaseHTTPRequestHandler):
                 } for fee in transaction.fees
             ] if transaction.fees else []
         }
-
+    
     def do_OPTIONS(self):
         """Handle preflight requests"""
         self._set_headers(200)
-
+    
     def do_GET(self):
         """Handle GET requests"""
         # Check authentication
-        if not self._require_auth_or_return():
+        if not self._authenticate():
+            self._send_unauthorized()
             return
-
+        
         session = get_session()
-
+        
         try:
             # GET /transactions - List all transactions
             if self.path == '/transactions' or self.path.startswith('/transactions?'):
+                # Parse query parameters
                 parsed_url = urlparse(self.path)
                 query_params = parse_qs(parsed_url.query)
-
+                
+                # Build query
                 query = session.query(Transaction)
-
+                
+                # Apply filters
                 if 'status' in query_params:
                     status = query_params['status'][0]
                     query = query.filter(Transaction.transaction_status == status)
-
+                
                 if 'category' in query_params:
                     category_code = query_params['category'][0]
                     query = query.join(TransactionCategory).filter(
                         TransactionCategory.category_code == category_code
                     )
-
+                
+                # Execute query
                 transactions = query.all()
-
+                
                 result = {
                     'success': True,
                     'count': len(transactions),
                     'data': [self._transaction_to_dict(t) for t in transactions]
                 }
-
+                
                 self._set_headers(200)
                 self.wfile.write(json.dumps(result, indent=2).encode())
-
+            
             # GET /transactions/{id} - Get single transaction
             elif re.match(r'^/transactions/\d+$', self.path):
                 transaction_id = int(self.path.split('/')[-1])
                 transaction = session.query(Transaction).get(transaction_id)
-
+                
                 if not transaction:
                     self._set_headers(404)
                     self.wfile.write(json.dumps({
@@ -117,40 +151,43 @@ class TransactionHandler(BaseHTTPRequestHandler):
                         'message': f'Transaction {transaction_id} not found'
                     }).encode())
                     return
-
+                
                 result = {
                     'success': True,
                     'data': self._transaction_to_dict(transaction)
                 }
-
+                
                 self._set_headers(200)
                 self.wfile.write(json.dumps(result, indent=2).encode())
-
+            
             else:
                 self._set_headers(404)
                 self.wfile.write(json.dumps({
                     'error': 'Not Found',
                     'message': 'Endpoint not found'
                 }).encode())
-
+        
         except Exception as e:
             self._set_headers(500)
             self.wfile.write(json.dumps({
                 'error': 'Internal Server Error',
                 'message': str(e)
             }).encode())
-
+        
         finally:
             session.close()
-
+    
     def do_POST(self):
         """Handle POST requests - Create new transaction"""
-        if not self._require_auth_or_return():
+        # Check authentication
+        if not self._authenticate():
+            self._send_unauthorized()
             return
-
+        
         session = get_session()
-
+        
         try:
+            # Read request body
             content_length = int(self.headers.get('Content-Length', 0))
             if content_length == 0:
                 self._set_headers(400)
@@ -159,10 +196,11 @@ class TransactionHandler(BaseHTTPRequestHandler):
                     'message': 'Request body required'
                 }).encode())
                 return
-
+            
             raw_body = self.rfile.read(content_length)
             data = json.loads(raw_body.decode('utf-8'))
-
+            
+            # Validate required fields
             required_fields = ['external_ref', 'amount', 'raw_data', 'transaction_date']
             missing_fields = [f for f in required_fields if f not in data]
             if missing_fields:
@@ -172,21 +210,25 @@ class TransactionHandler(BaseHTTPRequestHandler):
                     'message': f'Missing required fields: {", ".join(missing_fields)}'
                 }).encode())
                 return
-
+            
+            # Get default user
             default_user = session.query(User).first()
-
+            
+            # Get category (default to TRANSFER if not specified)
             category_code = data.get('category_code', 'TRANSFER')
             category = session.query(TransactionCategory).filter_by(
                 category_code=category_code
             ).first()
-
+            
             if not category:
                 category = session.query(TransactionCategory).filter_by(
                     category_code='TRANSFER'
                 ).first()
-
+            
+            # Parse transaction date
             trans_date = datetime.fromisoformat(data['transaction_date'])
-
+            
+            # Create transaction
             transaction = Transaction(
                 external_ref=data['external_ref'],
                 amount=data['amount'],
@@ -200,15 +242,16 @@ class TransactionHandler(BaseHTTPRequestHandler):
                 category_id=category.category_id,
                 user_id=default_user.user_id
             )
-
+            
             session.add(transaction)
             session.flush()
-
+            
+            # Add fee if specified
             if 'fee_amount' in data:
                 fee_type = session.query(FeeType).filter_by(
                     fee_name='Transaction Fee'
                 ).first()
-
+                
                 if fee_type:
                     fee = TransactionFee(
                         transaction_fee_amount=data['fee_amount'],
@@ -217,9 +260,9 @@ class TransactionHandler(BaseHTTPRequestHandler):
                         fee_type_id=fee_type.fee_type_id
                     )
                     session.add(fee)
-
+            
             session.commit()
-
+            
             result = {
                 'success': True,
                 'message': 'Transaction created successfully',
@@ -228,13 +271,13 @@ class TransactionHandler(BaseHTTPRequestHandler):
             self._set_headers(201)
             self.wfile.write(json.dumps(result, indent=2).encode())
 
-        except json.JSONDecodeError:
+        except json.JSONDecodeError:    
             self._set_headers(400)
             self.wfile.write(json.dumps({
                 'error': 'Bad Request',
                 'message': 'Invalid JSON in request body'
             }).encode())
-
+    
         except Exception as e:
             session.rollback()
             self._set_headers(500)
@@ -242,18 +285,21 @@ class TransactionHandler(BaseHTTPRequestHandler):
                 'error': 'Internal Server Error',
                 'message': str(e)
             }).encode())
-
+        
         finally:
             session.close()
 
     def do_PUT(self):
         """Handle PUT requests - Update transaction"""
-        if not self._require_auth_or_return():
+        # Check authentication
+        if not self._authenticate():
+            self._send_unauthorized()
             return
-
+        
+        # Extract transaction ID from URL
         pattern = r'^/transactions/(\d+)$'
         match = re.match(pattern, self.path)
-
+        
         if not match:
             self._set_headers(400)
             self.wfile.write(json.dumps({
@@ -261,21 +307,24 @@ class TransactionHandler(BaseHTTPRequestHandler):
                 'message': 'Invalid endpoint format. Use /transactions/{id}'
             }).encode())
             return
-
+        
         transaction_id = int(match.group(1))
         session = get_session()
-
+        
         try:
+            # Find transaction
             transaction = session.query(Transaction).get(transaction_id)
-
+            
             if not transaction:
                 self._set_headers(404)
                 self.wfile.write(json.dumps({
                     'error': 'Not Found',
-                    'message': f'Transaction {transaction_id} not found'
+                    'message': f'Transaction {transaction_id} not found' 
+            
                 }).encode())
                 return
-
+            
+            # Read request body
             content_length = int(self.headers.get('Content-Length', 0))
             if content_length == 0:
                 self._set_headers(400)
@@ -284,37 +333,38 @@ class TransactionHandler(BaseHTTPRequestHandler):
                     'message': 'Request body required'
                 }).encode())
                 return
-
+            
             raw_body = self.rfile.read(content_length)
             update_data = json.loads(raw_body.decode('utf-8'))
-
+            
+            # Update allowed fields only
             allowed_fields = [
-                'amount', 'transaction_status', 'sender_notes',
+                'amount', 'transaction_status', 'sender_notes', 
                 'counter_party', 'currency'
             ]
-
+            
             for key, value in update_data.items():
                 if key in allowed_fields:
                     setattr(transaction, key, value)
-
+            
             session.commit()
-
+            
             result = {
                 'success': True,
                 'message': 'Transaction updated successfully',
                 'data': self._transaction_to_dict(transaction)
             }
-
+            
             self._set_headers(200)
             self.wfile.write(json.dumps(result, indent=2).encode())
-
+        
         except json.JSONDecodeError:
             self._set_headers(400)
             self.wfile.write(json.dumps({
                 'error': 'Bad Request',
                 'message': 'Invalid JSON in request body'
             }).encode())
-
+        
         except Exception as e:
             session.rollback()
             self._set_headers(500)
@@ -322,18 +372,21 @@ class TransactionHandler(BaseHTTPRequestHandler):
                 'error': 'Internal Server Error',
                 'message': str(e)
             }).encode())
-
+        
         finally:
             session.close()
 
     def do_DELETE(self):
         """Handle DELETE requests - Delete transaction"""
-        if not self._require_auth_or_return():
+        # Check authentication
+        if not self._authenticate():
+            self._send_unauthorized()
             return
-
+        
+        # Extract transaction ID from URL
         pattern = r'^/transactions/(\d+)$'
         match = re.match(pattern, self.path)
-
+        
         if not match:
             self._set_headers(400)
             self.wfile.write(json.dumps({
@@ -341,13 +394,14 @@ class TransactionHandler(BaseHTTPRequestHandler):
                 'message': 'Invalid endpoint format. Use /transactions/{id}'
             }).encode())
             return
-
+        
         transaction_id = int(match.group(1))
         session = get_session()
-
+        
         try:
+            # Find transaction
             transaction = session.query(Transaction).get(transaction_id)
-
+            
             if not transaction:
                 self._set_headers(404)
                 self.wfile.write(json.dumps({
@@ -355,15 +409,19 @@ class TransactionHandler(BaseHTTPRequestHandler):
                     'message': f'Transaction {transaction_id} not found'
                 }).encode())
                 return
-
+            
             # Delete transaction (fees cascade automatically)
             session.delete(transaction)
             session.commit()
-
-            # RESTFUL SUCCESS: 204 No Content
-            self.send_response(204)
-            self.end_headers()
-
+            
+            result = {
+                'success': True,
+                'message': f'Transaction {transaction_id} deleted successfully'
+            }
+            
+            self._set_headers(200)
+            self.wfile.write(json.dumps(result).encode())
+        
         except Exception as e:
             session.rollback()
             self._set_headers(500)
@@ -371,7 +429,7 @@ class TransactionHandler(BaseHTTPRequestHandler):
                 'error': 'Internal Server Error',
                 'message': str(e)
             }).encode())
-
+        
         finally:
             session.close()
 
@@ -390,7 +448,3 @@ def run(port=8000):
     except KeyboardInterrupt:
         print("\n\n✓ Server stopped")
         httpd.server_close()
-
-
-if __name__ == "__main__":
-    run()
