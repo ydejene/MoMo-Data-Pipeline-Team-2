@@ -37,6 +37,13 @@ def linear_search(transactions: List[Dict], transaction_id: int) -> Optional[Dic
             return transaction
     return None
 
+def dictionary_lookup(transaction_dict: Dict[int, Dict], transaction_id: int) -> Optional[Dict]:
+    """
+    Dictionary Lookup - O(1) time complexity
+    Uses hash table for constant-time access regardless of dataset size.
+    """
+    return transaction_dict.get(transaction_id)
+
 def measure_search_time(search_func, *args, iterations: int = 100):
     """Measure average execution time for a search function."""
     times = []
