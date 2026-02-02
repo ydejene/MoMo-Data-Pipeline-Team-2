@@ -48,7 +48,7 @@ def measure_search_time(search_func, *args, iterations: int = 100):
     """Measure average execution time for a search function."""
     times = []
     
-    for _in range(iterations):
+    for _ in range(iterations):
         start_time = time.perf_counter()
         search_func(*args)
         end_time = time.perf_counter()
