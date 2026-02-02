@@ -73,12 +73,22 @@ def run_comparison(num_searches: int = 20):
     print(f"Loaded {len(transactions)} transactions")
 
     # Build dictionary
-    print("\n🔨 Building dictionary index...")
+    print("Building dictionary index...")
     transaction_dict = build_transaction_dict(transactions)
-    print(f"✓ Dictionary built with {len(transaction_dict)} entries")
+    print(f"Dictionary built with {len(transaction_dict)} entries")
     
     # Generate random transaction IDs to search for
     max_id = len(transactions)
     search_ids = [random.randint(1, max_id) for _ in range(num_searches)]
     
-    print(f"\n🔍 Running {num_searches} search operations...\n")
+    print(f"Running {num_searches} search operations...")
+
+    # Measure Linear Search performance
+    print("Testing Linear Search (O(n))...")
+    linear_times = []
+    for search_id in search_ids:
+        avg_time = measure_search_time(linear_search, transactions, search_id, iterations=100)
+        linear_times.append(avg_time)
+    
+    avg_linear_time = sum(linear_times) / len(linear_times)
+    print(f"Average time: {avg_linear_time * 1_000_000:.2f} microseconds")
