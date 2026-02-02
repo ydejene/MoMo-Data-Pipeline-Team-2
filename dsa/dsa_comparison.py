@@ -56,3 +56,18 @@ def measure_search_time(search_func, *args, iterations: int = 100):
     
     avg_time = sum(times) / len(times)
     return avg_time
+
+def run_comparison(num_searches: int = 20):
+    """Run performance comparison between linear search and dictionary lookup."""
+    print("DATA STRUCTURES & ALGORITHMS COMPARISON")
+    print("Linear Search vs Dictionary Lookup")
+    
+    # Load transactions
+    print("Loading transactions...")
+    transactions = load_transactions()
+    
+    if not transactions:
+        print("No transactions found. Please run xml_parser.py first.")
+        return
+    
+    print(f"Loaded {len(transactions)} transactions")
