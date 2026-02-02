@@ -71,3 +71,14 @@ def run_comparison(num_searches: int = 20):
         return
     
     print(f"Loaded {len(transactions)} transactions")
+
+    # Build dictionary
+    print("\n🔨 Building dictionary index...")
+    transaction_dict = build_transaction_dict(transactions)
+    print(f"✓ Dictionary built with {len(transaction_dict)} entries")
+    
+    # Generate random transaction IDs to search for
+    max_id = len(transactions)
+    search_ids = [random.randint(1, max_id) for _ in range(num_searches)]
+    
+    print(f"\n🔍 Running {num_searches} search operations...\n")
