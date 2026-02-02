@@ -58,8 +58,8 @@ def save_to_json(data, output_path):
 
 def main():
     """Extract raw SMS data from XML"""
-    input_file = "data/raw/modified_sms_v2.xml"
-    output_file = "data/processed/01_extracted_raw.json"
+    input_file = "../data/raw/modified_sms_v2.xml"
+    output_file = "../data/processed/01_extracted_raw.json"
     
     print("="*60)
     print("STEP 1: EXTRACT - Parsing XML")

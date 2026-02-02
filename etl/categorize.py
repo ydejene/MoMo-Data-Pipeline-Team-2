@@ -140,8 +140,8 @@ def save_to_json(data, output_path):
 
 def main():
     """Categorize cleaned transactions"""
-    input_file = "data/processed/02_cleaned_normalized.json"
-    output_file = "data/processed/03_categorized.json"
+    input_file = "../data/processed/02_cleaned_normalized.json"
+    output_file = "../data/processed/03_categorized.json"
     
     print("="*60)
     print("STEP 3: TRANSFORM - Categorize Transactions")
