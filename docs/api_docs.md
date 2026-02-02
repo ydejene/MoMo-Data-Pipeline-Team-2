@@ -223,3 +223,103 @@ Content-Length: 245
 | `400` | Bad Request - Invalid JSON, missing required fields, or empty body |
 | `401` | Unauthorized - Invalid credentials |
 | `500` | Internal Server Error - Database error or invalid date format |
+
+---
+
+### 4. Update Transaction
+Update fields for an existing transaction by ID. Uses the same request structure as `POST /transactions` but all fields are optional — only provided fields will be updated.
+
+**Endpoint & Method**
+`PUT /transactions/{id}`
+
+**Path Parameters**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | integer | Unique ID of the transaction to update |
+
+**Request Body Parameters**
+Use the same fields as `POST /transactions`. All fields are optional for updates.
+
+**Request Example**
+```http
+PUT /transactions/1 HTTP/1.1
+Host: localhost:8000
+Authorization: Basic YWRtaW46cGFzc3dvcmQxMjM=
+Content-Type: application/json
+
+{
+  "amount": 5500,
+  "sender_notes": "Updated note",
+  "transaction_status": "COMPLETED"
+}
+```
+
+**Response Example (200 OK)**
+```json
+{
+  "success": true,
+  "message": "Transaction updated successfully",
+  "data": {
+    "transaction_id": 1,
+    "external_ref": "MOM202401001",
+    "amount": 5500.0,
+    "currency": "RWF",
+    "transaction_status": "COMPLETED",
+    "sender_notes": "Updated note",
+    "transaction_date": "2024-01-15T14:30:00",
+    "counter_party": "John Doe (0712345678)",
+    "created_at": "2024-02-01T10:45:22.123456",
+    "category": {
+      "category_id": 1,
+      "category_name": "Transfer",
+      "category_code": "TRANSFER"
+    }
+  }
+}
+```
+
+**Error Codes**
+| Code | Description |
+|------|-------------|
+| `200` | Success - Transaction updated |
+| `400` | Bad Request - Invalid JSON or invalid field values |
+| `401` | Unauthorized - Invalid credentials |
+| `404` | Not Found - Transaction ID does not exist |
+| `500` | Internal Server Error |
+
+---
+
+### 5. Delete Transaction
+Delete a transaction record by ID.
+
+**Endpoint & Method**
+`DELETE /transactions/{id}`
+
+**Path Parameters**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | integer | Unique ID of the transaction to delete |
+
+**Request Example**
+```http
+DELETE /transactions/1 HTTP/1.1
+Host: localhost:8000
+Authorization: Basic YWRtaW46cGFzc3dvcmQxMjM=
+```
+
+**Response Example (200 OK)**
+```json
+{
+  "success": true,
+  "message": "Transaction deleted successfully",
+  "deleted_id": 1
+}
+```
+
+**Error Codes**
+| Code | Description |
+|------|-------------|
+| `200` | Success - Transaction deleted |
+| `401` | Unauthorized - Invalid credentials |
+| `404` | Not Found - Transaction ID does not exist |
+| `500` | Internal Server Error |
