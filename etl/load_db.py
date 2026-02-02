@@ -100,4 +100,43 @@ def load_transactions_to_db(json_file_path):
         
         # Log to system logs
         log = SystemLog(
-            log_type='BATCH_COMPLETE
+            log_type='BATCH_COMPLETE',
+            severity='INFO',
+            raw_sms_body=f'Loaded {loaded_count} transactions from {json_file_path}',
+            log_time=datetime.now()
+        )
+        session.add(log)
+        session.commit()
+        
+        print(f"✓ Successfully loaded {loaded_count} transactions")
+        print(f"  Skipped {skipped_count} duplicate/invalid records")
+        
+    except Exception as e:
+        session.rollback()
+        print(f"✗ Error loading transactions: {e}")
+        
+        # Log error
+        log = SystemLog(
+            log_type='DB_ERROR',
+            severity='ERROR',
+            raw_sms_body=str(e),
+            log_time=datetime.now()
+        )
+        session.add(log)
+        session.commit()
+        
+        raise
+    finally:
+        session.close()
+
+if __name__ == "__main__":
+    json_file = "data/processed/parsed_sms.json"
+    
+    if not Path(json_file).exists():
+        print(f"✗ File not found: {json_file}")
+        print("  Run etl/parse_xml.py first!")
+        sys.exit(1)
+    
+    print("Loading transactions into database...")
+    load_transactions_to_db(json_file)
+    print("\n✓ ETL process complete!")
