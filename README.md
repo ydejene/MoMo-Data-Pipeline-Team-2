@@ -34,8 +34,9 @@ An enterprise-level fullstack application to process MoMo SMS transaction data f
 ## Project Structure
 ```
 MoMo-Data-Pipeline-Team-2/
-├── api/                              # REST API Implementation
-│   └── app.py                        # HTTP server with CRUD endpoints
+├── api/ 
+│   ├── app.py                        # REST API Implementation (HTTP server)
+│   └── auth.py                       # Basic Authentication
 │
 ├── data/                             # Data storage
 │   ├── raw/
