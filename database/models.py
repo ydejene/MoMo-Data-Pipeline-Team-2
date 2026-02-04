@@ -1,13 +1,16 @@
 from sqlalchemy import Column, Integer, String, Numeric, DateTime, Text, Boolean, ForeignKey, TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
+# Declare python side relationship b/n models (e.g., User.transactions)
 from sqlalchemy.orm import relationship
+# DateTime is just a type indicator while datetime creates a timestamp(default value) for the attributes created_at, logtime 
 from datetime import datetime
 
+# The Base class (returned from declarative_base()) will be inherited by the model classes, so SQLAlchemy knows they map to DB tables
 Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'Momo_User'
-    
+    # Column: column constructor to declare table column and constraints (nullable, unique), default values, primary_keys
     user_id = Column(Integer, primary_key=True, autoincrement=True)
     full_name = Column(String(255), nullable=False)
     phone_number = Column(String(12), unique=True, nullable=False)
