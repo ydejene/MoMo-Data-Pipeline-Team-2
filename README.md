@@ -34,8 +34,9 @@ An enterprise-level fullstack application to process MoMo SMS transaction data f
 ## Project Structure
 ```
 MoMo-Data-Pipeline-Team-2/
-├── api/                              # REST API Implementation
-│   └── app.py                        # HTTP server with CRUD endpoints
+├── api/ 
+│   ├── app.py                        # REST API Implementation (HTTP server)
+│   └── auth.py                       # Basic Authentication
 │
 ├── data/                             # Data storage
 │   ├── raw/
@@ -99,12 +100,12 @@ XML Source → ETL Pipeline → SQLite Database → REST API → Client Applicat
 
 ### Architecture Components
 
-#### 1️**Data Source Layer**
+#### 1️ **Data Source Layer**
 - **Input:** `modified_sms_v2.xml` (816KB, 1691 SMS records)
 - **Format:** XML with MoMo transaction messages
 - **Source:** Rwanda MTN Mobile Money SMS export
 
-#### 2️**ETL Pipeline** Implemented
+#### 2️ **ETL Pipeline** Implemented
 | Step | Script | Input | Output | Purpose |
 |------|--------|-------|--------|---------|
 | 1 | `parse_xml.py` | `modified_sms_v2.xml` | `01_extracted_raw.json` | Extract raw SMS attributes |
@@ -114,7 +115,7 @@ XML Source → ETL Pipeline → SQLite Database → REST API → Client Applicat
 
 **Orchestration:** Run complete pipeline with `etl/run.py`
 
-#### 3️**Storage Layer** Implemented
+#### 3️ **Storage Layer** Implemented
 - **Database:** SQLite (`database/db.sqlite3`)
 - **ORM:** SQLAlchemy with declarative models
 - **Schema:** 6 normalized tables (see ERD)
@@ -125,14 +126,14 @@ XML Source → ETL Pipeline → SQLite Database → REST API → Client Applicat
   - `Transaction_fees` - Junction table (M:N)
   - `System_Logs` - Processing logs
 
-#### 4️**API Layer** Implemented
+#### 4️ **API Layer** Implemented
 - **Server:** Python `http.server.BaseHTTPRequestHandler`
 - **Port:** 8000 (localhost)
 - **Authentication:** HTTP Basic Auth
 - **Format:** JSON responses
 - **Endpoints:** 5 CRUD operations (see API Documentation)
 
-#### 5️**DSA Layer** Implemented
+#### 5️ **DSA Layer** Implemented
 - **Comparison:** Linear Search vs Dictionary Lookup
 - **Dataset:** 20+ transactions from database
 - **Iterations:** 10,000 per method
@@ -196,7 +197,7 @@ pip install -r requirements.txt
 
 #### Step 1: Clone Repository
 ```bash
-git clone https://github.com/your-org/MoMo-Data-Pipeline-Team-2.git
+git clone https://github.com/ydejene/MoMo-Data-Pipeline-Team-2.git
 cd MoMo-Data-Pipeline-Team-2
 ```
 
